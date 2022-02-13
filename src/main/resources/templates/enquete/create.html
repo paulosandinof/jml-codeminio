@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Reservar Área</title>
+  <link rel="stylesheet" th:href="@{/assets/css/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/assets/menusistema.css}">
+  <style>
+    #botao {
+      background: #2d9239;
+      border-radius: 50%;
+      height: 50px;
+      width: 50px;
+      border: 2px solid transparent;
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body>
+  <header th:insert="fragments/menu.html :: header"></header>
+
+  <div class="container"
+    style="background-color: #f4f4f4;padding: 10px;border-radius: 10px;width: 70%;overflow: hidden; margin-top: 30px;">
+
+    <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <span>Enquete criada com sucesso</span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div th:each="error : ${errors}" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <span th:text="${error}">Alerta</span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <form th:action="@{/sistema/enquete/create}" method="post" th:object="${enqueteDTO}">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <h3>Título</h3>
+          <input class="form-control" type="text" name="titulo" th:value="*{titulo}">
+        </div>
+        <div class="form-group col-md-6">
+          <h3>Data Limite</h3>
+          <!-- <input id="data" class="form-control" type="text" th:field="*{data}" maxlength="10"> -->
+          <input id="data" class="form-control" type="text" name="dataLimite" th:value="*{#conversions.convert(dataLimite,'String')}" maxlength="10">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <h3>Alternativas</h3>
+        </div>
+      </div>
+      <div class="form-row" th:each="alternativa, alternativaStat : *{alternativas}">
+        <div class="form-group col-md-12">
+          <input class="form-control" type="text" th:field="*{alternativas[__${alternativaStat.index}__]}">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group mx-auto">
+          <button id="botao" name="addField">+</button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary float-right" style="background-color:#2d9239;border-color:#2d9239">
+        Cadastrar
+      </button>
+    </form>
+  </div>
+  <script th:src="@{/assets/js/vendor/jquery-1.12.4.min.js}"></script>
+  <script th:src="@{/assets/js/popper.min.js}"></script>
+  <script th:src="@{/assets/js/bootstrap.min.js}"></script>
+  <script>
+    var input = document.getElementById('data');
+
+    var dateInputMask = function dateInputMask(elm) {
+      elm.addEventListener('keypress', function (e) {
+        if (e.keyCode < 47 || e.keyCode > 57) {
+          e.preventDefault();
+        }
+
+        var len = elm.value.length;
+
+        // If we're at a particular place, let the user type the slash
+        // i.e., 12/12/1212
+        if (len !== 1 || len !== 3) {
+          if (e.keyCode == 47) {
+            e.preventDefault();
+          }
+        }
+
+        // If they don't add the slash, do it for them...
+        if (len === 2) {
+          elm.value += '/';
+        }
+
+        // If they don't add the slash, do it for them...
+        if (len === 5) {
+          elm.value += '/';
+        }
+      });
+    };
+
+    dateInputMask(input);
+  </script>
+</body>
+
+</html>
