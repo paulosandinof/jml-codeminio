@@ -5,27 +5,26 @@ import com.codeminio.dominio.Enquete;
 import com.codeminio.dtos.EnqueteDTO;
 import com.codeminio.exceptions.RegraNegocioException;
 import com.codeminio.service.EnqueteService;
-
-import java.security.Principal;
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/sistema/enquete")
 public class EnqueteController {
 
     @Autowired
-    private EnqueteService enqueteService;
+    private /*@ spec_public @*/ EnqueteService enqueteService;
 
+    /*@ requires model != null;
+    @*/
     @GetMapping
     public String index(Model model) {
         List<Enquete> enquetes = enqueteService.index();
@@ -34,6 +33,8 @@ public class EnqueteController {
         return "enquete/index";
     }
 
+    /*@ requires principal != null && model != null && idEnquete > 0;
+    @*/
     @GetMapping(value = "{id}")
     public String show(Principal principal, Model model, @PathVariable("id") int idEnquete) {
         try {
@@ -64,6 +65,8 @@ public class EnqueteController {
         }
     }
 
+    /*@ requires principal != null && model != null && idEnquete > 0 && alternativa.intValue() > 0;
+    @*/
     @PostMapping(value = "{id}")
     public String update(Principal principal, Model model, @PathVariable("id") int idEnquete, Integer alternativa) {
         try {
@@ -80,6 +83,8 @@ public class EnqueteController {
         }
     }
 
+    /*@ requires model != null;
+    @*/
     @GetMapping(value = "/create")
     public String create(Model model) {
         EnqueteDTO enqueteDTO = new EnqueteDTO();
@@ -88,6 +93,8 @@ public class EnqueteController {
         return "enquete/create";
     }
 
+    /*@ requires principal != null && model != null && enqueteDTO != null;
+    @*/
     @PostMapping(value = "/create")
     public String store(Principal principal, Model model, EnqueteDTO enqueteDTO) {
         try {
@@ -105,7 +112,9 @@ public class EnqueteController {
         }
     }
 
-    @PostMapping(value = "/create", params = { "addField" })
+    /*@ requires model != null && enqueteDTO != null;
+    @*/
+    @PostMapping(value = "/create", params = {"addField"})
     public String addField(Model model, EnqueteDTO enqueteDTO) {
         enqueteDTO.setAlternativas("");
         model.addAttribute("enqueteDTO", enqueteDTO);

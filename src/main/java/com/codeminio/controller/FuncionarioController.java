@@ -23,8 +23,10 @@ import java.util.Optional;
 public class FuncionarioController {
 
     @Autowired
-    private FuncionarioServiceImpl service;
+    private /*@ spec_public @*/ FuncionarioServiceImpl service;
 
+    /*@ requires model != null;
+    @*/
     @GetMapping(value = "/listar")
     public String listar(Model model) {
         List<Funcionario> funcionarios = service.listarFuncionarios();
@@ -32,11 +34,13 @@ public class FuncionarioController {
         return "funcionario/listar";
     }
 
+    /*@ requires funcionario != null && br != null && ra != null;
+    @*/
     @PostMapping("/salvar")
-    public ModelAndView cadastrar(Funcionario Funcionario, BindingResult br, RedirectAttributes ra) {
+    public ModelAndView cadastrar(Funcionario funcionario, BindingResult br, RedirectAttributes ra) {
         ModelAndView modelAndView = null;
         try {
-            service.salvarFuncionario(Funcionario);
+            service.salvarFuncionario(funcionario);
             modelAndView = new ModelAndView(new RedirectView("index", true));
         } catch (RegraNegocioException e) {
             return modelAndView;
@@ -45,6 +49,8 @@ public class FuncionarioController {
         return modelAndView;
     }
 
+    /*@ requires modelo != null;
+    @*/
     @GetMapping(value = "/form")
     public String cadastrar(Model modelo) {
         Funcionario novoFuncionario = new Funcionario();
@@ -52,6 +58,8 @@ public class FuncionarioController {
         return "funcionario/cadastrar";
     }
 
+    /*@ requires id != null;
+    @*/
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<Funcionario> procurar(@PathVariable(value = "id") Integer id) {
 
@@ -60,6 +68,8 @@ public class FuncionarioController {
         return new ResponseEntity<Funcionario>(Funcionario.get(), HttpStatus.OK);
     }
 
+    /*@ requires id != null && funcionario != null;
+    @*/
     @PutMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<Funcionario> atualizar(@PathVariable(value = "id") Integer id,
                                                  @RequestBody Funcionario funcionario) {
@@ -80,6 +90,8 @@ public class FuncionarioController {
         return new ResponseEntity<Funcionario>(antigoFuncionario.get(), HttpStatus.OK);
     }
 
+    /*@ requires id != null;
+    @*/
     @DeleteMapping(value = "/{id}", produces = "application/text")
     public String deletar(@PathVariable("id") Integer id) {
         service.deletarPorId(id);
