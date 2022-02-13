@@ -116,11 +116,11 @@ public class EnqueteServiceImpl implements EnqueteService {
             errors.add("Usuário inexistente");
         }
 
-        if (enqueteDTO.getTitulo().isEmpty() || enqueteDTO.getTitulo().isBlank()) {
+        if (enqueteDTO.getTitulo().isEmpty() || enqueteDTO.getTitulo().trim().isEmpty()) {
             errors.add("Por favor preencha o título");
         }
 
-        if (enqueteDTO.getDataLimite().isEmpty() || enqueteDTO.getTitulo().isBlank()) {
+        if (enqueteDTO.getDataLimite().isEmpty() || enqueteDTO.getTitulo().trim().isEmpty()) {
             errors.add("Por favor preencha a data limite");
         } else {
             try {
@@ -137,7 +137,7 @@ public class EnqueteServiceImpl implements EnqueteService {
 
         boolean flag = false;
         for (String alternativa : enqueteDTO.getAlternativas()) {
-            if ((alternativa.isEmpty() || alternativa.isBlank()) && flag == false) {
+            if ((alternativa.isEmpty() || alternativa.trim().isEmpty()) && flag == false) {
                 errors.add("Por favor preencha todas as alternativas");
                 flag = true;
             }
